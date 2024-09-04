@@ -89,6 +89,7 @@ export interface AuthenticateRequest {
 
 export interface CallApiEndpointRequest {
   body?:string
+  session_vars?:Map<string, string>
   user_id?:string
 }
 
@@ -99,6 +100,7 @@ export interface CallApiEndpointResponse {
 
 export interface CallRpcEndpointRequest {
   body?:string
+  session_vars?:Map<string, string>
   user_id?:string
 }
 
@@ -1223,6 +1225,22 @@ export class ConsoleService {
     const urlPath = `/v2/console/group/${id}/member`;
     let params = new HttpParams({ encoder: new CustomHttpParamEncoder() });
     return this.httpClient.get<ApiGroupUserList>(this.config.host + urlPath, { params: params, headers: this.getTokenAuthHeaders(auth_token) })
+  }
+
+  /** Get purchase by transaction_id */
+  getPurchase(auth_token: string, transaction_id: string): Observable<ApiValidatedPurchase> {
+    transaction_id = encodeURIComponent(String(transaction_id))
+    const urlPath = `/v2/console/iap/purchase/${transaction_id}`;
+    let params = new HttpParams({ encoder: new CustomHttpParamEncoder() });
+    return this.httpClient.get<ApiValidatedPurchase>(this.config.host + urlPath, { params: params, headers: this.getTokenAuthHeaders(auth_token) })
+  }
+
+  /** Get subscription by original_transaction_id */
+  getSubscription(auth_token: string, original_transaction_id: string): Observable<ApiValidatedSubscription> {
+    original_transaction_id = encodeURIComponent(String(original_transaction_id))
+    const urlPath = `/v2/console/iap/subscription/${original_transaction_id}`;
+    let params = new HttpParams({ encoder: new CustomHttpParamEncoder() });
+    return this.httpClient.get<ApiValidatedSubscription>(this.config.host + urlPath, { params: params, headers: this.getTokenAuthHeaders(auth_token) })
   }
 
   /** List leaderboards */

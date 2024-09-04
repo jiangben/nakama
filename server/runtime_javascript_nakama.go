@@ -227,6 +227,8 @@ func (n *runtimeJavascriptNakamaModule) mappings(r *goja.Runtime) map[string]fun
 		"notificationsSend":                    n.notificationsSend(r),
 		"notificationSendAll":                  n.notificationSendAll(r),
 		"notificationsDelete":                  n.notificationsDelete(r),
+		"notificationsGetId":                   n.notificationsGetId(r),
+		"notificationsDeleteId":                n.notificationsDeleteId(r),
 		"walletUpdate":                         n.walletUpdate(r),
 		"walletsUpdate":                        n.walletsUpdate(r),
 		"walletLedgerUpdate":                   n.walletLedgerUpdate(r),
@@ -239,6 +241,7 @@ func (n *runtimeJavascriptNakamaModule) mappings(r *goja.Runtime) map[string]fun
 		"leaderboardCreate":                    n.leaderboardCreate(r),
 		"leaderboardDelete":                    n.leaderboardDelete(r),
 		"leaderboardList":                      n.leaderboardList(r),
+		"leaderboardRanksDisable":              n.leaderboardRanksDisable(r),
 		"leaderboardRecordsList":               n.leaderboardRecordsList(r),
 		"leaderboardRecordsListCursorFromRank": n.leaderboardRecordsListCursorFromRank(r),
 		"leaderboardRecordWrite":               n.leaderboardRecordWrite(r),
@@ -260,6 +263,7 @@ func (n *runtimeJavascriptNakamaModule) mappings(r *goja.Runtime) map[string]fun
 		"tournamentAddAttempt":                 n.tournamentAddAttempt(r),
 		"tournamentJoin":                       n.tournamentJoin(r),
 		"tournamentList":                       n.tournamentList(r),
+		"tournamentsRanksDisable":              n.tournamentRanksDisable(r),
 		"tournamentsGetId":                     n.tournamentsGetId(r),
 		"tournamentRecordsList":                n.tournamentRecordsList(r),
 		"tournamentRecordWrite":                n.tournamentRecordWrite(r),
@@ -273,6 +277,7 @@ func (n *runtimeJavascriptNakamaModule) mappings(r *goja.Runtime) map[string]fun
 		"groupUsersList":                       n.groupUsersList(r),
 		"userGroupsList":                       n.userGroupsList(r),
 		"friendsList":                          n.friendsList(r),
+		"friendsOfFriendsList":                 n.friendsOfFriendsList(r),
 		"friendsAdd":                           n.friendsAdd(r),
 		"friendsDelete":                        n.friendsDelete(r),
 		"friendsBlock":                         n.friendsBlock(r),
@@ -349,6 +354,7 @@ func (n *runtimeJavascriptNakamaModule) stringToBinary(r *goja.Runtime) func(goj
 // @param indexName(type=string) Name of the index to list entries from.
 // @param queryString(type=string) Query to filter index entries.
 // @param limit(type=int) Maximum number of results to be returned.
+// @param order(type=[]string, optional=true) The storage object fields to sort the query results by. The prefix '-' before a field name indicates descending order. All specified fields must be indexed and sortable.
 // @param callerId(type=string, optional=true) User ID of the caller, will apply permissions checks of the user. If empty defaults to system user and permission checks are bypassed.
 // @return objects(nkruntime.StorageObjectList) A list of storage objects.
 // @return error(error) An optional error value if an error occurred.
@@ -363,9 +369,20 @@ func (n *runtimeJavascriptNakamaModule) storageIndexList(r *goja.Runtime) func(g
 				panic(r.NewTypeError("limit must be 1-10000"))
 			}
 		}
+
+		var err error
+		order := make([]string, 0)
+		orderIn := f.Argument(3)
+		if !goja.IsUndefined(orderIn) && !goja.IsNull(orderIn) {
+			order, err = exportToSlice[[]string](orderIn)
+			if err != nil {
+				panic(r.NewTypeError("expects an array of strings"))
+			}
+		}
+
 		callerID := uuid.Nil
-		if !goja.IsUndefined(f.Argument(3)) && !goja.IsNull(f.Argument(3)) {
-			callerIdStr := getJsString(r, f.Argument(3))
+		if !goja.IsUndefined(f.Argument(4)) && !goja.IsNull(f.Argument(4)) {
+			callerIdStr := getJsString(r, f.Argument(4))
 			cid, err := uuid.FromString(callerIdStr)
 			if err != nil {
 				panic(r.NewTypeError("expects caller id to be valid identifier"))
@@ -373,7 +390,7 @@ func (n *runtimeJavascriptNakamaModule) storageIndexList(r *goja.Runtime) func(g
 			callerID = cid
 		}
 
-		objectList, err := n.storageIndex.List(n.ctx, callerID, idxName, queryString, int(limit))
+		objectList, err := n.storageIndex.List(n.ctx, callerID, idxName, queryString, int(limit), order)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("failed to lookup storage index: %s", err.Error())))
 		}
@@ -1549,12 +1566,12 @@ func (n *runtimeJavascriptNakamaModule) authenticateFacebook(r *goja.Runtime) fu
 			create = getJsBool(r, f.Argument(3))
 		}
 
-		dbUserID, dbUsername, created, importFriendsPossible, err := AuthenticateFacebook(n.ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookLimitedLogin.AppId, token, username, create)
+		dbUserID, dbUsername, created, err := AuthenticateFacebook(n.ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookLimitedLogin.AppId, token, username, create)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error authenticating: %v", err.Error())))
 		}
 
-		if importFriends && importFriendsPossible {
+		if importFriends {
 			// Errors are logged before this point and failure here does not invalidate the whole operation.
 			_ = importFacebookFriends(n.ctx, n.logger, n.db, n.tracker, n.router, n.socialClient, uuid.FromStringOrNil(dbUserID), dbUsername, token, false)
 		}
@@ -3521,7 +3538,7 @@ func (n *runtimeJavascriptNakamaModule) matchGet(r *goja.Runtime) func(goja.Func
 // @group matches
 // @summary List currently running realtime multiplayer matches and optionally filter them by authoritative mode, label, and current participant count.
 // @param limit(type=number, optional=true, default=1) The maximum number of matches to list.
-// @param authoritative(type=bool, optional=true, default=false) Set true to only return authoritative matches, false to only return relayed matches.
+// @param authoritative(type=bool, optional=true, default=nil) Set true to only return authoritative matches, false to only return relayed matches and nil to return both.
 // @param label(type=string, optional=true, default="") A label to filter authoritative matches by. Default "" meaning any label matches.
 // @param minSize(type=number, optional=true) Inclusive lower limit of current match participants.
 // @param maxSize(type=number, optional=true) Inclusive upper limit of current match participants.
@@ -3760,11 +3777,11 @@ func (n *runtimeJavascriptNakamaModule) notificationsSend(r *goja.Runtime) func(
 			if _, ok := notificationObj["senderId"]; ok {
 				senderIDStr, ok := notificationObj["senderId"].(string)
 				if !ok {
-					panic(r.NewTypeError("expects 'userId' value to be a string"))
+					panic(r.NewTypeError("expects 'senderId' value to be a string"))
 				}
 				uid, err := uuid.FromString(senderIDStr)
 				if err != nil {
-					panic(r.NewTypeError("expects 'userId' value to be a valid id"))
+					panic(r.NewTypeError("expects 'senderId' value to be a valid id"))
 				}
 				senderID = uid
 			}
@@ -3914,6 +3931,108 @@ func (n *runtimeJavascriptNakamaModule) notificationsDelete(r *goja.Runtime) fun
 			if err := NotificationDelete(n.ctx, n.logger, n.db, uid, notificationIDs); err != nil {
 				panic(r.NewGoError(fmt.Errorf("failed to delete notifications: %s", err.Error())))
 			}
+		}
+
+		return goja.Undefined()
+	}
+}
+
+// @group notifications
+// @summary Get notifications by their id.
+// @param ctx(type=context.Context) The context object represents information about the server and requester.
+// @param ids(type=string[]) A list of notification ids.
+// @param userID(type=string) Optional userID to scope results to that user only.
+// @return notifications(type=runtime.Notification[]) A list of notifications.
+// @return error(error) An optional error value if an error occurred.
+func (n *runtimeJavascriptNakamaModule) notificationsGetId(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+	return func(f goja.FunctionCall) goja.Value {
+		notifIdsIn := f.Argument(0)
+
+		if notifIdsIn == goja.Undefined() || notifIdsIn == goja.Null() {
+			panic(r.NewTypeError("expects an array of ids"))
+		}
+
+		notifIds, err := exportToSlice[[]string](notifIdsIn)
+		if err != nil {
+			panic(r.NewTypeError("expects an array of strings"))
+		}
+		for _, userID := range notifIds {
+			if _, err = uuid.FromString(userID); err != nil {
+				panic(r.NewTypeError(fmt.Sprintf("invalid user id: %v", userID)))
+			}
+		}
+
+		if notifIds == nil {
+			return r.ToValue(make([]string, 0))
+		}
+
+		userIdIn := f.Argument(1)
+		userId := ""
+		if userIdIn != goja.Undefined() && userIdIn != goja.Null() {
+			userId = getJsString(r, userIdIn)
+		}
+
+		results, err := NotificationsGetId(n.ctx, n.logger, n.db, userId, notifIds...)
+		if err != nil {
+			panic(r.NewGoError(fmt.Errorf("failed to get notifications by id: %s", err.Error())))
+		}
+
+		notifications := make([]any, 0, len(results))
+		for _, no := range results {
+			notifObj := r.NewObject()
+
+			_ = notifObj.Set("id", no.Id)
+			_ = notifObj.Set("user_id", no.UserID)
+			_ = notifObj.Set("subject", no.Subject)
+			_ = notifObj.Set("persistent", no.Persistent)
+			_ = notifObj.Set("content", no.Content)
+			_ = notifObj.Set("code", no.Code)
+			_ = notifObj.Set("sender", no.Sender)
+			_ = notifObj.Set("create_time", no.CreateTime.Seconds)
+			_ = notifObj.Set("persistent", no.Persistent)
+
+			notifications = append(notifications, notifObj)
+		}
+
+		return r.NewArray(notifications...)
+	}
+}
+
+// @group notifications
+// @summary Delete notifications by their id.
+// @param ids(type=string[]) A list of notification ids.
+// @param userID(type=string) Optional userID to scope deletions to that user only.
+// @return error(error) An optional error value if an error occurred.
+func (n *runtimeJavascriptNakamaModule) notificationsDeleteId(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+	return func(f goja.FunctionCall) goja.Value {
+		notifIdsIn := f.Argument(0)
+
+		if notifIdsIn == goja.Undefined() || notifIdsIn == goja.Null() {
+			panic(r.NewTypeError("expects an array of ids"))
+		}
+
+		notifIds, err := exportToSlice[[]string](notifIdsIn)
+		if err != nil {
+			panic(r.NewTypeError("expects an array of strings"))
+		}
+		for _, userID := range notifIds {
+			if _, err = uuid.FromString(userID); err != nil {
+				panic(r.NewTypeError(fmt.Sprintf("invalid user id: %v", userID)))
+			}
+		}
+
+		if notifIds == nil {
+			return r.ToValue(make([]string, 0))
+		}
+
+		userIdIn := f.Argument(1)
+		userId := ""
+		if userIdIn != goja.Undefined() && userIdIn != goja.Null() {
+			userId = getJsString(r, userIdIn)
+		}
+
+		if err := NotificationsDeleteId(n.ctx, n.logger, n.db, userId, notifIds...); err != nil {
+			panic(r.NewGoError(fmt.Errorf("failed to get notifications by id: %s", err.Error())))
 		}
 
 		return goja.Undefined()
@@ -4999,6 +5118,7 @@ func (n *runtimeJavascriptNakamaModule) multiUpdate(r *goja.Runtime) func(goja.F
 // @param operator(type=string, optional=true, default="best") The operator that determines how scores behave when submitted. Possible values are "best", "set", or "incr".
 // @param resetSchedule(type=string, optional=true) The cron format used to define the reset schedule for the leaderboard. This controls when a leaderboard is reset and can be used to power daily/weekly/monthly leaderboards.
 // @param metadata(type=object, optional=true) The metadata you want associated to the leaderboard. Some good examples are weather conditions for a racing game.
+// @param enableRanks(type=bool, optional=true, default=false) Whether to enable rank values for the leaderboard.
 // @return error(error) An optional error value if an error occurred.
 func (n *runtimeJavascriptNakamaModule) leaderboardCreate(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
 	return func(f goja.FunctionCall) goja.Value {
@@ -5068,7 +5188,12 @@ func (n *runtimeJavascriptNakamaModule) leaderboardCreate(r *goja.Runtime) func(
 			metadataStr = string(metadataBytes)
 		}
 
-		_, created, err := n.leaderboardCache.Create(n.ctx, id, authoritative, sortOrderNumber, operatorNumber, resetSchedule, metadataStr)
+		enableRanks := false
+		if f.Argument(6) != goja.Undefined() && f.Argument(6) != goja.Null() {
+			enableRanks = getJsBool(r, f.Argument(6))
+		}
+
+		_, created, err := n.leaderboardCache.Create(n.ctx, id, authoritative, sortOrderNumber, operatorNumber, resetSchedule, metadataStr, enableRanks)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error creating leaderboard: %v", err.Error())))
 		}
@@ -5157,6 +5282,22 @@ func (n *runtimeJavascriptNakamaModule) leaderboardList(r *goja.Runtime) func(go
 		resultMap["leaderboards"] = results
 
 		return r.ToValue(resultMap)
+	}
+}
+
+// @group leaderboards
+// @param id(type=string) The leaderboard id.
+// @return error(error) An optional error value if an error occurred.
+// @summary Disable a leaderboard rank cache freeing its allocated resources. If already disabled is a NOOP.
+func (n *runtimeJavascriptNakamaModule) leaderboardRanksDisable(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+	return func(f goja.FunctionCall) goja.Value {
+		id := getJsString(r, f.Argument(0))
+
+		if err := disableLeaderboardRanks(n.ctx, n.logger, n.db, n.leaderboardCache, n.rankCache, id); err != nil {
+			panic(r.NewGoError(err))
+		}
+
+		return goja.Undefined()
 	}
 }
 
@@ -5678,7 +5819,7 @@ func (n *runtimeJavascriptNakamaModule) purchaseGetByTransactionId(r *goja.Runti
 			panic(r.NewTypeError("expects a transaction id string"))
 		}
 
-		purchase, err := GetPurchaseByTransactionId(n.ctx, n.db, transactionID)
+		purchase, err := GetPurchaseByTransactionId(n.ctx, n.logger, n.db, transactionID)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error retrieving purchase: %s", err.Error())))
 		}
@@ -5958,6 +6099,7 @@ func (n *runtimeJavascriptNakamaModule) subscriptionsList(r *goja.Runtime) func(
 // @param maxSize(type=number, optional=true) Maximum size of participants in a tournament.
 // @param maxNumScore(type=number, optional=true, default=1000000) Maximum submission attempts for a tournament record.
 // @param joinRequired(type=bool, optional=true, default=false) Whether the tournament needs to be joined before a record write is allowed.
+// @param enableRanks(type=bool, optional=true, default=false) Whether to enable rank values for the leaderboard.
 // @return error(error) An optional error value if an error occurred.
 func (n *runtimeJavascriptNakamaModule) tournamentCreate(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
 	return func(f goja.FunctionCall) goja.Value {
@@ -6090,7 +6232,12 @@ func (n *runtimeJavascriptNakamaModule) tournamentCreate(r *goja.Runtime) func(g
 			joinRequired = getJsBool(r, f.Argument(14))
 		}
 
-		if err := TournamentCreate(n.ctx, n.logger, n.leaderboardCache, n.leaderboardScheduler, id, authoritative, sortOrderNumber, operatorNumber, resetSchedule, metadataStr, title, description, category, startTime, endTime, duration, maxSize, maxNumScore, joinRequired); err != nil {
+		enableRanks := false
+		if f.Argument(15) != goja.Undefined() && f.Argument(15) != goja.Null() {
+			enableRanks = getJsBool(r, f.Argument(15))
+		}
+
+		if err := TournamentCreate(n.ctx, n.logger, n.leaderboardCache, n.leaderboardScheduler, id, authoritative, sortOrderNumber, operatorNumber, resetSchedule, metadataStr, title, description, category, startTime, endTime, duration, maxSize, maxNumScore, joinRequired, enableRanks); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error creating tournament: %v", err.Error())))
 		}
 
@@ -6451,6 +6598,22 @@ func (n *runtimeJavascriptNakamaModule) tournamentList(r *goja.Runtime) func(goj
 		resultMap["tournaments"] = results
 
 		return r.ToValue(resultMap)
+	}
+}
+
+// @group tournaments
+// @param id(type=string) The tournament id.
+// @return error(error) An optional error value if an error occurred.
+// @summary Disable a tournament rank cache freeing its allocated resources. If already disabled is a NOOP.
+func (n *runtimeJavascriptNakamaModule) tournamentRanksDisable(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+	return func(f goja.FunctionCall) goja.Value {
+		id := getJsString(r, f.Argument(0))
+
+		if err := DisableTournamentRanks(n.ctx, n.logger, n.db, n.leaderboardCache, n.rankCache, id); err != nil {
+			panic(r.NewGoError(err))
+		}
+
+		return goja.Undefined()
 	}
 }
 
@@ -6947,8 +7110,8 @@ func (n *runtimeJavascriptNakamaModule) groupUsersList(r *goja.Runtime) func(goj
 		limit := 100
 		if !goja.IsUndefined(f.Argument(1)) && !goja.IsNull(f.Argument(1)) {
 			limit = int(getJsInt(r, f.Argument(1)))
-			if limit < 1 || limit > 100 {
-				panic(r.NewTypeError("expects limit to be 1-100"))
+			if limit < 1 || limit > 10000 {
+				panic(r.NewTypeError("expects limit to be 1-10000"))
 			}
 		}
 
@@ -7190,6 +7353,68 @@ func (n *runtimeJavascriptNakamaModule) friendsList(r *goja.Runtime) func(goja.F
 
 		result := map[string]interface{}{
 			"friends": userFriends,
+		}
+		if friends.Cursor != "" {
+			result["cursor"] = friends.Cursor
+		}
+
+		return r.ToValue(result)
+	}
+}
+
+// @group friends
+// @summary List all friends of friends of a user.
+// @param userId(type=string) The ID of the user whose friends of friends you want to list.
+// @param limit(type=number, optional=true, default=10) The number of friends to retrieve in this page of results. No more than 100 limit allowed per result.
+// @param cursor(type=string, optional=true, default="") Pagination cursor from previous result. Don't set to start fetching from the beginning.
+// @return friends(nkruntime.FriendsOfFriendsList) The user information for users that are friends of friends of the current user.
+// @return cursor(string) An optional next page cursor that can be used to retrieve the next page of records (if any). Will be set to "" or null when fetching last available page.
+// @return error(error) An optional error value if an error occurred.
+func (n *runtimeJavascriptNakamaModule) friendsOfFriendsList(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+	return func(f goja.FunctionCall) goja.Value {
+		userIDString := getJsString(r, f.Argument(0))
+		if userIDString == "" {
+			panic(r.NewTypeError("expects a user ID string"))
+		}
+		userID, err := uuid.FromString(userIDString)
+		if err != nil {
+			panic(r.NewTypeError("expects user ID to be a valid identifier"))
+		}
+
+		limit := 100
+		if !goja.IsUndefined(f.Argument(1)) && !goja.IsNull(f.Argument(1)) {
+			limit = int(getJsInt(r, f.Argument(1)))
+			if limit < 1 || limit > 1000 {
+				panic(r.NewTypeError("expects limit to be 1-1000"))
+			}
+		}
+
+		cursor := ""
+		if !goja.IsUndefined(f.Argument(2)) && !goja.IsNull(f.Argument(2)) {
+			cursor = getJsString(r, f.Argument(2))
+		}
+
+		friends, err := ListFriendsOfFriends(n.ctx, n.logger, n.db, n.statusRegistry, userID, limit, cursor)
+		if err != nil {
+			panic(r.NewGoError(fmt.Errorf("error while trying to list friends for a user: %v", err.Error())))
+		}
+
+		userFriendsOfFriends := make([]interface{}, 0, len(friends.FriendsOfFriends))
+		for _, f := range friends.FriendsOfFriends {
+			fum, err := userToJsObject(f.User)
+			if err != nil {
+				panic(r.NewGoError(err))
+			}
+
+			fm := make(map[string]interface{}, 3)
+			fm["referrer"] = f.Referrer
+			fm["user"] = fum
+
+			userFriendsOfFriends = append(userFriendsOfFriends, fm)
+		}
+
+		result := map[string]interface{}{
+			"friendsOfFriends": userFriendsOfFriends,
 		}
 		if friends.Cursor != "" {
 			result["cursor"] = friends.Cursor

@@ -5,13 +5,63 @@ The format is based on [keep a changelog](http://keepachangelog.com) and this pr
 
 ## [Unreleased]
 ### Changed
+- Increased limit on runtimes group users list functions.
+
+### Fixed
+- Ensure matchmaker stats behave correctly if matchmaker becomes fully empty and idle.
+
+## [3.23.0] - 2024-07-27
+### Added
+- Add devconsole view to list and search purchases across users.
+- Add devconsole view to list and search subscriptions across users.
+- Add function to get notifications by identifier to Go runtime.
+- Add function to get notifications by identifier to Lua runtime.
+- Add function to get notifications by identifier to TypeScript/JavaScript runtime.
+- Add function to delete notifications by identifier to Go runtime.
+- Add function to delete notifications by identifier to Lua runtime.
+- Add function to delete notifications by identifier to TypeScript/JavaScript runtime.
+- Add runtime function to disable ranks for an active leaderboard.
+- Add new matchmaker stats API.
+- Add support for specifying session vars in devconsole API explorer calls.
+
+### Changed
+- Add leaderboard create function parameter to enable or disable ranks.
+- Add tournament create function parameter to enable or disable ranks.
+- Obfuscate further fields when viewing server configuration in the devconsole.
+- Build with Go 1.22.5.
+
+### Fixed
+- Correctly wire Go runtime shutdown function context.
+- Fix friends of friends API error when user has no friends.
+- Fix group listing pagination if name filter is used.
+- Correctly register friends of friends API before/after hooks.
+
+## [3.22.0] - 2024-06-09
+### Added
+- Add runtime support for registering a shutdown hook function.
+- Add support to custom sorting in storage index search.
+- New config option to enforce a single party per user socket.
+- New config option to enforce a single valid session token per user.
+- New friends of friends listing API and runtime functions.
+
+### Changed
 - When a user is blocked, any DM streams between the blocker and blocked user are torn down.
-- Add confirm dialog to console delete operations.
+- Add confirm dialog to devconsole delete operations.
 - Reduce Console Storage View memory usage.
+- Upgraded pgx to v5.
+- Attempt to import Facebook friends on Limited Login authentication.
+- Build with Go 1.22.4.
+- Improve devconsole login page experience.
+- Return Lua VM instance to the pool only after any error processing is complete.
+- Better cancellation of long running queries in devconsole operations.
 
 ### Fixed
 - Ensure Apple receipts with duplicate transaction identifiers are processed cleanly.
 - Fix leaderboard rank cache initialization upon startup.
+- Fix log message incorrectly referencing "userID" instead of "senderID".
+- Fix Lua runtime calls to string metatable functions.
+- Correctly handle Steam API rejections on friend listing operations.
+- Ensure Google auth token errors are handled gracefully.
 
 ## [3.21.1] - 2024-03-22
 ### Added
