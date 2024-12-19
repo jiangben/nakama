@@ -28,6 +28,7 @@ import (
 	"math"
 	"net"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -68,6 +69,7 @@ type ctxExpiryKey = ctxkeys.ExpiryKey
 type ctxTokenIDKey = ctxkeys.TokenIDKey
 type ctxTokenIssuedAtKey = ctxkeys.TokenIssuedAtKey
 
+type ctxUserMetaKey = ctxkeys.UserMetaKey
 type ctxFullMethodKey struct{}
 
 type ApiServer struct {
@@ -92,9 +94,10 @@ type ApiServer struct {
 	runtime              *Runtime
 	grpcServer           *grpc.Server
 	grpcGatewayServer    *http.Server
+	template             TemplateManager
 }
 
-func StartApiServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, protojsonUnmarshaler *protojson.UnmarshalOptions, config Config, version string, socialClient *social.Client, storageIndex StorageIndex, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, matchmaker Matchmaker, tracker Tracker, router MessageRouter, streamManager StreamManager, metrics Metrics, pipeline *Pipeline, runtime *Runtime) *ApiServer {
+func StartApiServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, protojsonUnmarshaler *protojson.UnmarshalOptions, config Config, version string, socialClient *social.Client, storageIndex StorageIndex, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, matchmaker Matchmaker, tracker Tracker, router MessageRouter, streamManager StreamManager, metrics Metrics, pipeline *Pipeline, runtime *Runtime, templateManger TemplateManager) *ApiServer {
 	var gatewayContextTimeoutMs string
 	if config.GetSocket().IdleTimeoutMs > 500 {
 		// Ensure the GRPC Gateway timeout is just under the idle timeout (if possible) to ensure it has priority.
@@ -113,6 +116,14 @@ func StartApiServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, p
 			if err != nil {
 				return nil, err
 			}
+
+			// 使用 defer 捕获 panic
+			defer func() {
+				if r := recover(); r != nil {
+					stackInfo := string(debug.Stack())
+					logger.Error("Recovered from panic:", zap.Any("panic", r), zap.String("stack", stackInfo))
+				}
+			}()
 			return handler(ctx, req)
 		}),
 	}
@@ -148,6 +159,7 @@ func StartApiServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, p
 		matchmaker:           matchmaker,
 		runtime:              runtime,
 		grpcServer:           grpcServer,
+		template:             templateManger,
 	}
 
 	// Register and start GRPC server.
@@ -370,6 +382,10 @@ func securityInterceptorFunc(logger *zap.Logger, config Config, sessionCache Ses
 	case "/nakama.api.Nakama/AuthenticateGameCenter":
 		fallthrough
 	case "/nakama.api.Nakama/AuthenticateGoogle":
+		fallthrough
+	case "/nakama.api.Nakama/AuthenticateWechat":
+		fallthrough
+	case "/nakama.api.Nakama/AuthenticateTikTok":
 		fallthrough
 	case "/nakama.api.Nakama/AuthenticateSteam":
 		// Session refresh and authentication functions only require server key.

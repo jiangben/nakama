@@ -1,0 +1,31 @@
+name: nakama-node-jp
+
+database:
+  address:
+    - "root@192.168.102.223:26257"
+#    - "root@localhost:26257"
+#    - "root@192.168.102.224:26257"
+    #- "postgres://root@8.138.126.123:26257/nakama?sslmode=verify-full&sslrootcert=./cockroach-certs/ca.crt&sslcert=./cockroach-certs/client.root.crt&sslkey=./cockroach-certs/client.root.key"
+
+logger:
+  level: "debug"
+
+session:
+  encryption_key: "defaultencryptionkey"
+  token_expiry_sec: 86400
+  refresh_encryption_key: "defaultrefreshencryptionkey"
+  refresh_token_expiry_sec: 186400
+  single_socket: true
+
+socket:
+  server_key: "sparkgame"
+  port: 7450
+
+
+social:
+  wechat:
+    app_id: "wx1861752aaba00455"
+    app_secret: "3d0490d1fb17f6905989cf2561c34a42"
+  tiktok:
+    app_id: "tte8269e9b77120eb407"
+    app_secret: "54a13ecae262f25237f57cfafb20a4a454087edd"

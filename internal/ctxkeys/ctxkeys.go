@@ -7,3 +7,4 @@ type VarsKey struct{}
 type ExpiryKey struct{}
 type TokenIDKey struct{}
 type TokenIssuedAtKey struct{}
+type UserMetaKey struct{}

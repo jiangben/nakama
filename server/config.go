@@ -944,6 +944,16 @@ type SocialConfig struct {
 	FacebookInstantGame  *SocialConfigFacebookInstantGame  `yaml:"facebook_instant_game" json:"facebook_instant_game" usage:"Facebook Instant Game configuration."`
 	FacebookLimitedLogin *SocialConfigFacebookLimitedLogin `yaml:"facebook_limited_login" json:"facebook_limited_login" usage:"Facebook Limited Login configuration."`
 	Apple                *SocialConfigApple                `yaml:"apple" json:"apple" usage:"Apple Sign In configuration."`
+	Wechat               *SocialConfigWeChat               `yaml:"wechat" json:"wechat" usage:"Wechat configuration."`
+	TikTok               *SocialConfigTikTok               `yaml:"tiktok" json:"tiktok" usage:"TikTok configuration."`
+}
+
+func (cfg *SocialConfig) GetWechat() runtime.SocialConfigWechat {
+	return cfg.Wechat
+}
+
+func (cfg *SocialConfig) GetTikTok() runtime.SocialConfigTikTok {
+	return cfg.TikTok
 }
 
 func (cfg *SocialConfig) GetSteam() runtime.SocialConfigSteam {
@@ -1003,6 +1013,32 @@ func (s SocialConfigSteam) GetPublisherKey() string {
 
 func (s SocialConfigSteam) GetAppID() int {
 	return s.AppID
+}
+
+type SocialConfigWeChat struct {
+	AppId     string `yaml:"app_id"`
+	AppSecret string `yaml:"app_secret"`
+}
+
+func (c *SocialConfigWeChat) GetAppId() string {
+	return c.AppId
+}
+
+func (c *SocialConfigWeChat) GetAppSecret() string {
+	return c.AppSecret
+}
+
+type SocialConfigTikTok struct {
+	AppId     string `yaml:"app_id"`
+	AppSecret string `yaml:"app_secret"`
+}
+
+func (c *SocialConfigTikTok) GetAppId() string {
+	return c.AppId
+}
+
+func (c *SocialConfigTikTok) GetAppSecret() string {
+	return c.AppSecret
 }
 
 var _ runtime.SocialConfigFacebookInstantGame = &SocialConfigFacebookInstantGame{}

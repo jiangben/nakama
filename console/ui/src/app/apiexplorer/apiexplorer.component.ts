@@ -36,6 +36,29 @@ export class ApiExplorerComponent implements OnInit, AfterViewInit {
   public endpoints: Array<ApiEndpointDescriptor> = [];
   public endpointCallForm: UntypedFormGroup;
   public addVars = false;
+  // 定义一个变量来存储上一次的选择
+  private lastMethod: string | null = null;
+
+  handleClick(event: MouseEvent): void {
+    // 获取当前选择的方法
+    const currentMethod = this.f.method.value;
+
+    // 检查是否与上一次相同
+    if (currentMethod === this.lastMethod) {
+      // 执行相同选项被点击时的逻辑
+      this.handleRepeatedClick(currentMethod);
+    }
+
+    // 更新 lastMethod 为当前方法
+    this.lastMethod = currentMethod;
+  }
+
+  handleRepeatedClick(method: string): void {
+    // 这里放置重复点击相同选项时的逻辑
+    const endpoint = this.endpoints.concat(this.rpcEndpoints).find((e) => e.method === method);
+    this.updateQueryParam(endpoint?.method);
+    this.setupRequestBody(endpoint?.body_template);
+  }
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -131,7 +154,7 @@ export class ApiExplorerComponent implements OnInit, AfterViewInit {
     }
 
     const req: CallApiEndpointRequest = {
-      user_id: this.f.user_id.value,
+      user_id: this.f.user_id.value || "00000000-0000-0000-0000-000000000000",
       body: value,
       session_vars: vars as Map<string, string>,
     };
