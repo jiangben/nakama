@@ -15,10 +15,13 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpLoaderFactory } from './i18n-loader';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {WINDOW_PROVIDERS} from './window.provider';
 import {environment} from '../environments/environment';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
@@ -121,6 +124,14 @@ import {QRCodeModule} from 'angularx-qrcode';
     FormsModule,
     NgSelectModule,
     QRCodeModule,
+    TranslateModule.forRoot({
+      defaultLanguage: 'zh',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     WINDOW_PROVIDERS,

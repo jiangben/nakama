@@ -32,7 +32,12 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/static"
+              "src/static",
+              {
+                "glob": "**/*",
+                "input": "src/assets/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
               "src/bootstrap.min.css",

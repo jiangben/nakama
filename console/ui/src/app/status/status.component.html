@@ -1,4 +1,4 @@
-<script src="status.component.ts"></script><h2 class="pb-4">Status</h2>
+<script src="status.component.ts"></script><h2 class="pb-4">{{'Status' | translate}}</h2>
 
 <ngb-alert *ngIf="error" type="danger" [dismissible]="false">
   <img src="/static/svg/red-triangle.svg" alt="" width="16" height="" class="mr-2">
@@ -8,8 +8,8 @@
 <table class="status-table table table-sm table-striped mb-4" (mouseover)="showDelta = true" (mouseout)="showDelta = false">
   <thead class="thead-light">
     <tr>
-      <th scope="col">Node name</th>
-      <th scope="col">Sessions</th>
+      <th scope="col">{{'Node name' | translate}}</th>
+      <th scope="col">{{'Sessions' | translate}}</th>
       <th scope="col">Presences</th>
       <th scope="col">Authoritative Matches</th>
       <th scope="col">Goroutines</th>

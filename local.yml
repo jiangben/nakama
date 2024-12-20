@@ -29,3 +29,8 @@ social:
   tiktok:
     app_id: "tte8269e9b77120eb407"
     app_secret: "54a13ecae262f25237f57cfafb20a4a454087edd"
+
+console:
+  port: 7351
+  username: "admin"
+  password: "password"

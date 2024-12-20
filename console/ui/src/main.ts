@@ -14,6 +14,7 @@
 
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
@@ -22,12 +23,10 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule).then(ref => {
-  // Ensure Angular destroys itself on hot reloads.
-  if (window['ngRef']) {
-    window['ngRef'].destroy();
-  }
-  window['ngRef'] = ref;
-
-  // Otherwise, log the boot error
-}).catch(err => console.error(err));
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .then(moduleRef => {
+    const translate = moduleRef.injector.get(TranslateService);
+    translate.setDefaultLang('zh');
+    translate.use('zh');
+  })
+  .catch(err => console.error(err));
