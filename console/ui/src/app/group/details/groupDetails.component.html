@@ -5,25 +5,25 @@
 
 <ngb-alert [dismissible]="false" type="success" class="mb-3" *ngIf="updated">
   <img src="/static/svg/green-tick.svg" alt="" width="16" height="" class="mr-2">
-  <h6 class="mr-2 d-inline font-weight-bold">Group was modified successfully.</h6>
+  <h6 class="mr-2 d-inline font-weight-bold">{{'Group was modified successfully.' | translate}}</h6>
 </ngb-alert>
 
 <form [formGroup]="groupForm" (ngSubmit)="updateGroup()" class="add-border">
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="group_id">Group ID</label>
+        <label class="d-inline" for="group_id">{{'Group ID' | translate}}</label>
       </div>
       <input type="text" id="group_id" [value]="group.id" class="form-control-plaintext form-control-sm my-2"
-             placeholder="Group ID" disabled readonly>
+             placeholder="{{'Group ID' | translate}}" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="creator_id">Creator ID</label>
+        <label class="d-inline" for="creator_id">{{'Creator ID' | translate}}</label>
       </div>
       <a [routerLink]="['/accounts', group.creator_id]" style="width: 100%">
       <input type="text" id="creator_id"  [value]="group.creator_id" class="form-control-plaintext form-control-sm my-2"
-             placeholder="Creator ID" disabled readonly>
+             placeholder="{{'Creator ID' | translate}}" disabled readonly>
       </a>
     </div>
   </div>
@@ -35,7 +35,7 @@
       </div>
       <input type="text" id="name" class="form-control form-control-sm my-2" placeholder="Name" required
              formControlName="name" [ngClass]="{'is-invalid': f.name.dirty && f.name.errors}">
-      <div class="invalid-tooltip" [hidden]="f.name.disabled || f.name.valid || f.name.pristine">Name is required</div>
+      <div class="invalid-tooltip" [hidden]="f.name.disabled || f.name.valid || f.name.pristine">{{'Name is required' | translate}}</div>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
@@ -49,9 +49,9 @@
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline align-self-center">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="avatar_url">Avatar URL</label>
+        <label class="d-inline" for="avatar_url">{{'Avatar URL' | translate}}</label>
       </div>
-      <input type="text" id="avatar_url" class="form-control form-control-sm my-2" placeholder="Avatar URL"
+      <input type="text" id="avatar_url" class="form-control form-control-sm my-2" placeholder="{{'Avatar URL' | translate}}"
              formControlName="avatar_url">
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
@@ -73,9 +73,9 @@
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline align-self-center">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="max_count">Max Count</label>
+        <label class="d-inline" for="max_count">{{'Max Count' | translate}}</label>
       </div>
-      <input type="text" id="max_count" class="form-control form-control-sm my-2" placeholder="Max Count"
+      <input type="text" id="max_count" class="form-control form-control-sm my-2" placeholder="{{'Max Count' | translate}}"
              formControlName="max_count">
     </div>
   </div>
@@ -100,10 +100,10 @@
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="update_time">Update Time</label>
+        <label class="d-inline" for="update_time">{{'Update Time' | translate}}</label>
       </div>
       <input type="text" id="update_time" [value]="group.update_time"
-             class="form-control-plaintext form-control-sm my-2" placeholder="Update Time" disabled readonly>
+             class="form-control-plaintext form-control-sm my-2" placeholder="{{'Update Time' | translate}}" disabled readonly>
     </div>
   </div>
 

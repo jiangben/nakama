@@ -5,7 +5,7 @@
 
 <ngb-alert [dismissible]="false" type="success" class="mb-3" *ngIf="updated">
   <img src="/static/svg/green-tick.svg" alt="" width="16" height="" class="mr-2">
-  <h6 class="mr-2 d-inline font-weight-bold">Account was modified successfully.</h6>
+  <h6 class="mr-2 d-inline font-weight-bold">{{'Account was modified successfully.' | translate}}</h6>
 </ngb-alert>
 
 <div class="card p-2 mb-3 jsoneditor" style="height: 400px">
@@ -36,13 +36,13 @@
       <tr>
         <th style="width: 315px">ID</th>
         <th>Changeset</th>
-        <th style="width: 180px">Update Time</th>
+        <th style="width: 180px">{{'Update Time' | translate}}</th>
         <th style="width: 90px" *ngIf="deleteAllowed()">Remove</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngIf="walletLedger.length === 0">
-        <td colSpan="5" class="text-muted">No wallet ledger items found.</td>
+        <td colSpan="5" class="text-muted">{{'No wallet ledger items found.' | translate}}</td>
       </tr>
 
       <ng-template ngFor let-i="index" let-w [ngForOf]="walletLedger">

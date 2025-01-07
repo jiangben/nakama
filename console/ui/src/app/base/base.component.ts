@@ -32,6 +32,7 @@ import {SegmentService} from 'ngx-segment-analytics';
 import {ConsoleService, UserRole} from '../console.service';
 import {Globals} from '../globals';
 import {environment} from '../../environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './base.component.html',
@@ -66,6 +67,7 @@ export class BaseComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private segment: SegmentService,
     private readonly authService: AuthenticationService,
+    private readonly translate: TranslateService
   ) {
     this.loading = false;
     // Buffer router events every 2 seconds, to reduce loading screen jitter
@@ -104,6 +106,11 @@ export class BaseComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.routes = this.routes.map(route => ({
+      ...route,
+      label: this.translate.instant(route.label)
+    }));
+
     this.route.data.subscribe(data => {
       this.error = data.error ? data.error : '';
     });

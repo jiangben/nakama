@@ -1,4 +1,4 @@
-<h2 class="pb-4">API Explorer</h2>
+<h2 class="pb-4">{{'API Explorer' | translate}}</h2>
 
 <ngb-alert [dismissible]="false" type="danger" class="mb-3" *ngIf="error">
   <img src="/static/svg/red-triangle.svg" alt="" width="16" height="" class="mr-2">
@@ -12,15 +12,15 @@
         <div class="input-group">
           <div class="input-group-prepend">
             <select (click)="handleClick($event)" class="form-control custom-select dropdown-radius" id="method" formControlName="method">
-              <option [value]="''" disabled>Select Endpoint</option>
+              <option [value]="''" disabled>{{'Select Endpoint' | translate}}</option>
               <option *ngFor="let e of rpcEndpoints; index as i" value="{{e.method}}">{{e.method}}</option>
-              <option disabled class="text-muted">----</option>
+              <option disabled class="text-muted">{{'----' | translate}}</option>
               <option *ngFor="let e of endpoints; index as i" value="{{e.method}}">{{e.method}}</option>
             </select>
           </div>
-          <input type="text" class="form-control border-right-0" formControlName="user_id" placeholder="set user ID as request context"/>
+          <input type="text" class="form-control border-right-0" formControlName="user_id" placeholder="{{'set user ID as request context' | translate}}"/>
           <div class="input-group-append">
-            <button class="btn btn-primary" type="submit" [disabled]="f.method.invalid">Send Request</button>
+            <button class="btn btn-primary" type="submit" [disabled]="f.method.invalid">{{'Send Request' | translate}}</button>
           </div>
         </div>
       </form>
@@ -28,11 +28,11 @@
   </div>
 </div>
 
-<button class="btn btn-primary" type="button" (click)="addSessionVars();" *ngIf="!addVars">Add Session Variables</button>
+<button class="btn btn-primary" type="button" (click)="addSessionVars();" *ngIf="!addVars">{{'Add Session Variables' | translate}}</button>
 <div [hidden]="!addVars" class="row mb-3">
   <div class="col-md-6 py-3">
-    <h5>Session Vars</h5>
-    <div class="text-muted pt-2">Add variables as object of string to string key-value pairs.</div>
+    <h5>{{'Session Vars' | translate}}</h5>
+    <div class="text-muted pt-2">{{'Add variables as object of string to string key-value pairs.' | translate}}</div>
     <div class="card p-2 mb-3 jsoneditor">
       <div #editorVars style="height: 200px"></div>
     </div>
@@ -40,7 +40,7 @@
 </div>
 <div class="row mb-3">
   <div class="col-lg-6 py-3">
-    <h5>Request Body</h5>
+    <h5>{{'Request Body' | translate}}</h5>
     <div class="card p-2 mb-3 jsoneditor">
       <div #editorReq style="height: 500px"></div>
     </div>

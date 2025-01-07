@@ -129,6 +129,7 @@ const (
 	Nakama_SubmitInvite_FullMethodName                      = "/nakama.api.Nakama/SubmitInvite"
 	Nakama_ListInviter_FullMethodName                       = "/nakama.api.Nakama/ListInviter"
 	Nakama_ClaimInviteReward_FullMethodName                 = "/nakama.api.Nakama/ClaimInviteReward"
+	Nakama_GetGameTime_FullMethodName                       = "/nakama.api.Nakama/GetGameTime"
 )
 
 // NakamaClient is the client API for Nakama service.
@@ -315,6 +316,8 @@ type NakamaClient interface {
 	ListInviter(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*game.ListInviteeResponse, error)
 	// Claim invite reward for a user.
 	ClaimInviteReward(ctx context.Context, in *game.ClaimInviteRewardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Get Server Time
+	GetGameTime(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*game.GetGameTimeResponse, error)
 }
 
 type nakamaClient struct {
@@ -1135,6 +1138,15 @@ func (c *nakamaClient) ClaimInviteReward(ctx context.Context, in *game.ClaimInvi
 	return out, nil
 }
 
+func (c *nakamaClient) GetGameTime(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*game.GetGameTimeResponse, error) {
+	out := new(game.GetGameTimeResponse)
+	err := c.cc.Invoke(ctx, Nakama_GetGameTime_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NakamaServer is the server API for Nakama service.
 // All implementations must embed UnimplementedNakamaServer
 // for forward compatibility
@@ -1319,6 +1331,8 @@ type NakamaServer interface {
 	ListInviter(context.Context, *emptypb.Empty) (*game.ListInviteeResponse, error)
 	// Claim invite reward for a user.
 	ClaimInviteReward(context.Context, *game.ClaimInviteRewardRequest) (*emptypb.Empty, error)
+	// Get Server Time
+	GetGameTime(context.Context, *emptypb.Empty) (*game.GetGameTimeResponse, error)
 	mustEmbedUnimplementedNakamaServer()
 }
 
@@ -1595,6 +1609,9 @@ func (UnimplementedNakamaServer) ListInviter(context.Context, *emptypb.Empty) (*
 }
 func (UnimplementedNakamaServer) ClaimInviteReward(context.Context, *game.ClaimInviteRewardRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClaimInviteReward not implemented")
+}
+func (UnimplementedNakamaServer) GetGameTime(context.Context, *emptypb.Empty) (*game.GetGameTimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGameTime not implemented")
 }
 func (UnimplementedNakamaServer) mustEmbedUnimplementedNakamaServer() {}
 
@@ -3229,6 +3246,24 @@ func _Nakama_ClaimInviteReward_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Nakama_GetGameTime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NakamaServer).GetGameTime(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Nakama_GetGameTime_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NakamaServer).GetGameTime(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Nakama_ServiceDesc is the grpc.ServiceDesc for Nakama service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3595,6 +3630,10 @@ var Nakama_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClaimInviteReward",
 			Handler:    _Nakama_ClaimInviteReward_Handler,
+		},
+		{
+			MethodName: "GetGameTime",
+			Handler:    _Nakama_GetGameTime_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

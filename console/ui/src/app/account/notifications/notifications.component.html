@@ -21,8 +21,8 @@
     <thead class="thead-light">
     <tr>
       <th>ID</th>
-      <th *ngIf="!userId">User ID</th>
-      <th>Sender ID</th>
+      <th *ngIf="!userId">{{'User ID' | translate}}</th>
+      <th>{{'Sender ID' | translate}}</th>
       <th>Subject</th>
       <th>Code</th>
       <th style="width: 180px">Create Time</th>
@@ -57,7 +57,7 @@
         </td>
       </tr>
     </ng-template>
-    <tr *ngIf="notifications.length === 0"><td colspan="6" class="text-muted">No purchases were found.</td></tr>
+    <tr *ngIf="notifications.length === 0"><td colspan="6" class="text-muted">{{'No purchases were found.' | translate}}</td></tr>
     </tbody>
   </table>
 </div>

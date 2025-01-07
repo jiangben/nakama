@@ -20,13 +20,13 @@
   <table class="table table-sm table-bordered table-hover">
     <thead class="thead-light">
     <tr>
-      <th>Product ID</th>
-      <th>Original Transaction ID</th>
+      <th>{{'Product ID' | translate}}</th>
+      <th>{{'Original Transaction ID' | translate}}</th>
       <th>Store</th>
-      <th style="width: 180px">Purchase Time</th>
-      <th style="width: 180px">Expiry Time</th>
+      <th style="width: 180px">{{'Purchase Time' | translate}}</th>
+      <th style="width: 180px">{{'Expiry Time' | translate}}</th>
       <th style="width: 180px">Create Time</th>
-      <th style="width: 180px">Refund Time</th>
+      <th style="width: 180px">{{'Refund Time' | translate}}</th>
     </tr>
     </thead>
     <tbody>
@@ -49,18 +49,18 @@
       <tr *ngIf="subscriptionsRowOpen[i]" class="open-row">
         <td colspan="7">
           <div class="p-2">
-            <div><small><b>Provider Response</b></small></div>
+            <div><small><b>{{'Provider Response' | translate}}</b></small></div>
             <div>
               <pre class="pre-wrap m-0 p-0"><small>{{p.provider_response}}</small></pre>
             </div>
-            <div class="pt-2"><small><b>Provider Notification</b></small></div>
+            <div class="pt-2"><small><b>{{'Provider Notification' | translate}}</b></small></div>
             <div>
               <pre class="pre-wrap m-0 p-0"><small>{{p.provider_notification}}</small></pre>
             </div>
           </div>
       </tr>
     </ng-template>
-    <tr *ngIf="subscriptions.length === 0"><td colspan="7" class="text-muted">No subscriptions were found.</td></tr>
+    <tr *ngIf="subscriptions.length === 0"><td colspan="7" class="text-muted">{{'No subscriptions were found.' | translate}}</td></tr>
     </tbody>
   </table>
 </div>

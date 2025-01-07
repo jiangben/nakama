@@ -21,6 +21,7 @@ import {Observable} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {DeleteConfirmDialogComponent} from '../shared/delete-confirm-dialog/delete-confirm-dialog.component';
 import {DeleteConfirmService} from '../shared/delete-confirm.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './account.component.html',
@@ -47,9 +48,15 @@ export class AccountComponent implements OnInit {
     private readonly consoleService: ConsoleService,
     private readonly authService: AuthenticationService,
     private readonly deleteConfirmService: DeleteConfirmService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.views = this.views.map(view => ({
+      ...view,
+      label: this.translate.instant(view.label)
+    }));
+
     this.route.data.subscribe(
       d => {
         this.account = d[0].account;

@@ -1840,6 +1840,29 @@
         ]
       }
     },
+    "/v2/game/time": {
+      "get": {
+        "summary": "Get Server Time",
+        "operationId": "Nakama_GetGameTime",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/gameGetGameTimeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Nakama"
+        ]
+      }
+    },
     "/v2/group": {
       "get": {
         "summary": "List groups based on given filters.",
@@ -5668,6 +5691,15 @@
         },
         "description": {
           "type": "string"
+        }
+      }
+    },
+    "gameGetGameTimeResponse": {
+      "type": "object",
+      "properties": {
+        "gameTime": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

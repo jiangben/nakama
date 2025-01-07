@@ -91,6 +91,7 @@ function isValidTranslationText(text) {
         /^[\s\r\n]*$/,                  // 空白字符
         /^[{}()\[\]]/,                  // 括号
         /\.(svg|png|jpg)$/i,            // 图片文件
+        /^(Create Time|Remove|State|Subject)$/i, // 排除特定表单头
     ];
     
     return !excludePatterns.some(pattern => pattern.test(text));

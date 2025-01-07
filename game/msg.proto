@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package game;
 
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/heroiclabs/nakama/v3/game";
 
@@ -44,4 +45,8 @@ message ListInviteeResponse{
 
 message ClaimInviteRewardRequest{
   repeated string inviter_ids = 1;
+}
+
+message GetGameTimeResponse{
+  google.protobuf.Timestamp game_time = 1;
 }

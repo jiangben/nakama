@@ -1,7 +1,7 @@
 <div class="modal-header">
   <h4 class="modal-title">{{ title }}</h4>
   <button type="button" class="close" aria-describedby="Close" aria-label="Close" (click)="closeModal()">
-    <span aria-hidden="true">&times;</span>
+    <span aria-hidden="true">{{'&times;' | translate}}</span>
   </button>
 </div>
 <div class="modal-body">
@@ -20,7 +20,7 @@
         </p>
       </div>
       <input *ngIf="confirmDeleteForm.controls.delete" type="text" class="form-control" id="delete-confirm"
-             placeholder="Type 'DELETE' to confirm" formControlName="delete"
+             placeholder="{{'Type \'DELETE\' to confirm' | translate}}" formControlName="delete"
              [ngClass]="{'is-invalid': f.delete.touched && f.delete.invalid}"/>
     </form>
   </div>

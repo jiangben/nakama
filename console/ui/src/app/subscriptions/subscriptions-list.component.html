@@ -5,7 +5,7 @@
     <div class="col-md-9">
       <form [formGroup]="searchForm" (ngSubmit)="search()">
         <div class="input-group">
-          <input type="text" class="form-control border-right-0" formControlName="original_transaction_id" placeholder="Search by original_transaction_id (purchaseToken for Play Store purchases)"/>
+          <input type="text" class="form-control border-right-0" formControlName="original_transaction_id" placeholder="{{'Search by original_transaction_id (purchaseToken for Play Store purchases)' | translate}}"/>
 
           <div class="input-group-append">
             <div class="btn-group">

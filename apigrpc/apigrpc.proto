@@ -820,5 +820,10 @@ service Nakama {
       body: "*"
     };
   }
+
+  // Get Server Time
+  rpc GetGameTime (google.protobuf.Empty) returns (game.GetGameTimeResponse) {
+    option (google.api.http).get = "/v2/game/time";
+  }
 }
 

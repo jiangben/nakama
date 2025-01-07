@@ -8,26 +8,26 @@
   <table class="table table-sm table-hover table-bordered">
     <thead class="thead-light">
       <tr>
-        <th style="width: 320px">User ID</th>
+        <th style="width: 320px">{{'User ID' | translate}}</th>
         <th>Username</th>
         <th style="width: 300px">State</th>
-        <th style="width: 180px">Update Time</th>
+        <th style="width: 180px">{{'Update Time' | translate}}</th>
         <th style="width: 90px" *ngIf="deleteAllowed()">Remove</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngIf="friends.length === 0">
-        <td colSpan="5" class="text-muted">No friends found.</td>
+        <td colSpan="5" class="text-muted">{{'No friends found.' | translate}}</td>
       </tr>
 
       <tr *ngFor="let f of friends; index as i">
         <td (click)="viewAccount(f.user);">{{f.user.id}}</td>
         <td (click)="viewAccount(f.user);">{{f.user.username}}</td>
         <td (click)="viewAccount(f.user);">
-          <span *ngIf="f.state === 0">Friend (0)</span>
-          <span *ngIf="f.state === 1">Invite Sent (1)</span>
-          <span *ngIf="f.state === 2">Invite Received (2)</span>
-          <span *ngIf="f.state === 3">Blocked (3)</span>
+          <span *ngIf="f.state === 0">{{'Friend (0)' | translate}}</span>
+          <span *ngIf="f.state === 1">{{'Invite Sent (1)' | translate}}</span>
+          <span *ngIf="f.state === 2">{{'Invite Received (2)' | translate}}</span>
+          <span *ngIf="f.state === 3">{{'Blocked (3)' | translate}}</span>
         </td>
         <td>{{f.update_time}}</td>
         <td *ngIf="deleteAllowed()" class="text-center"><button type="button" class="btn btn-sm btn-danger" (click)="deleteFriend($event, i, f);">Delete</button></td>

@@ -8,7 +8,7 @@
   </nav>
 
   <div>
-    <button *ngIf="deleteAllowed()" (click)="deleteLeaderboard($event)" type="button" class="btn btn-danger btn-danger-icon"><img class="mr-2" src="/static/svg/bin-red.svg" alt="" width="13" height="13">Delete Leaderboard</button>
+    <button *ngIf="deleteAllowed()" (click)="deleteLeaderboard($event)" type="button" class="btn btn-danger btn-danger-icon"><img class="mr-2" src="/static/svg/bin-red.svg" alt="" width="13" height="13">{{'Delete Leaderboard' | translate}}</button>
   </div>
 </div>
 

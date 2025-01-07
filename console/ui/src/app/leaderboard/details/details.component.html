@@ -22,9 +22,9 @@
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="sortorder">Sort Order</label>
+        <label class="d-inline" for="sortorder">{{'Sort Order' | translate}}</label>
       </div>
-      <input type="text" id="sortorder" placeholder="Sort Order" [value]="orderString[leaderboard.sort_order]" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="sortorder" placeholder="{{'Sort Order' | translate}}" [value]="orderString[leaderboard.sort_order]" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
@@ -37,9 +37,9 @@
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="reset">Reset Schedule</label>
+        <label class="d-inline" for="reset">{{'Reset Schedule' | translate}}</label>
       </div>
-      <input type="text" id="reset" placeholder="Not Set" [value]="leaderboard.reset_schedule" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="reset" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.reset_schedule" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
@@ -52,13 +52,13 @@
   <div class="row add-border-single-row-bottom">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="reset">Prev Reset</label>
+        <label class="d-inline" for="reset">{{'Prev Reset' | translate}}</label>
       </div>
-      <input type="text" id="prev_reset" placeholder="Not Set" [value]="leaderboard.prev_reset" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="prev_reset" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.prev_reset" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="create_time">Next Reset</label>
+        <label class="d-inline" for="create_time">{{'Next Reset' | translate}}</label>
       </div>
       <input type="text" id="next_reset" placeholder="Create Time" [value]="leaderboard.next_reset" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
@@ -89,13 +89,13 @@
       <div class="col-3 pl-0">
         <label class="d-inline" for="category">Category</label>
       </div>
-      <input type="text" id="category" placeholder="Not Set" [value]="leaderboard.category" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="category" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.category" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="max_num_score">Max Num Score</label>
+        <label class="d-inline" for="max_num_score">{{'Max Num Score' | translate}}</label>
       </div>
-      <input type="text" id="max_num_score" placeholder="Not Set" [value]="leaderboard.max_num_score" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="max_num_score" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.max_num_score" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
   </div>
 
@@ -104,13 +104,13 @@
       <div class="col-3 pl-0">
         <label class="d-inline" for="size">Size</label>
       </div>
-      <input type="text" id="size" placeholder="Not Set" [value]="leaderboard.size" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="size" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.size" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="max_size">Max Size</label>
+        <label class="d-inline" for="max_size">{{'Max Size' | translate}}</label>
       </div>
-      <input type="text" id="max_size" placeholder="Not Set" [value]="leaderboard.max_size" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="max_size" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.max_size" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
   </div>
 
@@ -119,43 +119,43 @@
       <div class="col-3 pl-0">
         <label class="d-inline" for="duration">Duration</label>
       </div>
-      <input type="text" id="duration" placeholder="Not Set" [value]="leaderboard.duration" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="duration" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.duration" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="join_required">Join Required</label>
+        <label class="d-inline" for="join_required">{{'Join Required' | translate}}</label>
       </div>
-      <input type="text" id="join_required" placeholder="Not Set" [value]="leaderboard.join_required" class="form-control-plaintext form-control-sm my-2" disabled readonly>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6 d-flex justify-content-start align-items-baseline">
-      <div class="col-3 pl-0">
-        <label class="d-inline" for="start_time">Start Time</label>
-      </div>
-      <input type="text" id="start_time" placeholder="Not Set" [value]="leaderboard.start_time" class="form-control-plaintext form-control-sm my-2" disabled readonly>
-    </div>
-    <div class="col-md-6 d-flex justify-content-start align-items-baseline">
-      <div class="col-3 pl-0">
-        <label class="d-inline" for="end_time">End Time</label>
-      </div>
-      <input type="text" id="end_time" placeholder="Not Set" [value]="leaderboard.end_time" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="join_required" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.join_required" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
   </div>
 
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="start_active">Start Active</label>
+        <label class="d-inline" for="start_time">{{'Start Time' | translate}}</label>
       </div>
-      <input type="text" id="start_active" placeholder="Not Set" [value]="leaderboard.start_active" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="start_time" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.start_time" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="end_active">End Active</label>
+        <label class="d-inline" for="end_time">{{'End Time' | translate}}</label>
       </div>
-      <input type="text" id="end_active" placeholder="Not Set" [value]="leaderboard.end_active" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+      <input type="text" id="end_time" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.end_time" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 d-flex justify-content-start align-items-baseline">
+      <div class="col-3 pl-0">
+        <label class="d-inline" for="start_active">{{'Start Active' | translate}}</label>
+      </div>
+      <input type="text" id="start_active" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.start_active" class="form-control-plaintext form-control-sm my-2" disabled readonly>
+    </div>
+    <div class="col-md-6 d-flex justify-content-start align-items-baseline">
+      <div class="col-3 pl-0">
+        <label class="d-inline" for="end_active">{{'End Active' | translate}}</label>
+      </div>
+      <input type="text" id="end_active" placeholder="{{'Not Set' | translate}}" [value]="leaderboard.end_active" class="form-control-plaintext form-control-sm my-2" disabled readonly>
     </div>
   </div>
 </div>

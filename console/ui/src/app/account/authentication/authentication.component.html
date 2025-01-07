@@ -5,14 +5,14 @@
 
 <ngb-alert [dismissible]="false" type="success" class="mb-3" *ngIf="updated">
   <img src="/static/svg/green-tick.svg" alt="" width="16" height="" class="mr-2">
-  <h6 class="mr-2 d-inline font-weight-bold">Account was modified successfully.</h6>
+  <h6 class="mr-2 d-inline font-weight-bold">{{'Account was modified successfully.' | translate}}</h6>
 </ngb-alert>
 
 <form [formGroup]="accountForm" (ngSubmit)="updateAccount()" class="add-border">
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="selected_device_id_index">Device IDs</label>
+        <label class="d-inline" for="selected_device_id_index">{{'Device IDs' | translate}}</label>
       </div>
       <div class="input-group">
         <button (click)="copyDeviceIdToClipboard(this.f.selected_device_id_index.value)" type="button" class="btn btn-outline-secondary">
@@ -29,7 +29,7 @@
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="custom_id">Custom ID</label>
+        <label class="d-inline" for="custom_id">{{'Custom ID' | translate}}</label>
       </div>
       <div class="input-group">
         <input type="text" id="custom_id" [value]="account.custom_id" class="form-control form-control-sm" disabled>
@@ -43,7 +43,7 @@
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="facebook_id">Facebook ID</label>
+        <label class="d-inline" for="facebook_id">{{'Facebook ID' | translate}}</label>
       </div>
       <div class="input-group">
         <input type="text" id="facebook_id" [value]="account.user.facebook_id" class="form-control form-control-sm" disabled>
@@ -54,7 +54,7 @@
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline align-self-center">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="facebook_instant_game_id">FB Instant Game ID</label>
+        <label class="d-inline" for="facebook_instant_game_id">{{'FB Instant Game ID' | translate}}</label>
       </div>
       <div class="input-group">
         <input type="text" id="facebook_instant_game_id" [value]="account.user.facebook_instant_game_id" class="form-control form-control-sm" disabled>
@@ -68,7 +68,7 @@
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="apple_id">Apple ID</label>
+        <label class="d-inline" for="apple_id">{{'Apple ID' | translate}}</label>
       </div>
       <div class="input-group">
         <input type="text" id="apple_id" [value]="account.user.apple_id" class="form-control form-control-sm" disabled>
@@ -79,7 +79,7 @@
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline align-self-center">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="gamecenter_id">GameCenter ID</label>
+        <label class="d-inline" for="gamecenter_id">{{'GameCenter ID' | translate}}</label>
       </div>
       <div class="input-group">
         <input type="text" id="gamecenter_id" [value]="account.user.gamecenter_id" class="form-control form-control-sm" disabled>
@@ -93,7 +93,7 @@
   <div class="row">
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="google_id">Google ID</label>
+        <label class="d-inline" for="google_id">{{'Google ID' | translate}}</label>
       </div>
       <div class="input-group">
         <input type="text" id="google_id" [value]="account.user.google_id" class="form-control form-control-sm" disabled>
@@ -104,7 +104,7 @@
     </div>
     <div class="col-md-6 d-flex justify-content-start align-items-baseline">
       <div class="col-3 pl-0">
-        <label class="d-inline" for="steam_id">Steam ID</label>
+        <label class="d-inline" for="steam_id">{{'Steam ID' | translate}}</label>
       </div>
       <div class="input-group">
         <input type="text" id="steam_id" [value]="account.user.steam_id" class="form-control form-control-sm" disabled>
