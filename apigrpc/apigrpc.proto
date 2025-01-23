@@ -801,16 +801,16 @@ service Nakama {
   }
 
   // Submit an invitation request.
-  rpc SubmitInvite (game.SubmitBeInvitedRequest) returns (google.protobuf.Empty) {
+  rpc SubmitBeInvited (game.SubmitBeInvitedRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v2/invite/submit"
       body: "*"
     };
   }
 
-  // List inviter information for a user.
-  rpc ListInviter (google.protobuf.Empty) returns (game.ListInviteeResponse) {
-    option (google.api.http).get = "/v2/invite/list";
+  // List invitee information for a user.
+  rpc ListInvitee (google.protobuf.Empty) returns (game.ListInviteeResponse) {
+    option (google.api.http).get = "/v2/invitee/list";
   }
 
   // Claim invite reward for a user.

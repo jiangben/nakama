@@ -7,12 +7,12 @@ import (
 	"github.com/heroiclabs/nakama/v3/game"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"time"
 )
 
 type InviteRecord struct {
-	Invitee         string `json:"invitee"`
-	RewardClaimed   bool   `json:"reward_claimed"`
-	RewardAvailable bool   `json:"reward_available"`
+	Invitee       string `json:"invitee"`
+	RewardClaimed bool   `json:"reward_claimed"`
 }
 
 type InviteData struct {
@@ -39,22 +39,35 @@ func (s *ApiServer) SubmitBeInvited(ctx context.Context, in *game.SubmitBeInvite
 	userID := ctx.Value(ctxUserIDKey{}).(uuid.UUID)
 	userName := ctx.Value(ctxUsernameKey{}).(string)
 
+	owners, err := GetUsers(ctx, s.logger, s.db, s.statusRegistry, nil, []string{userName}, nil)
+	if err != nil {
+		return nil, nil
+	}
+
+	owner := owners.Users[0]
+	t := owner.CreateTime.AsTime()
+	now := time.Now()
+	if t.Year() != now.Year() || t.YearDay() != now.YearDay() {
+		s.logger.Info("不是新用户", zap.String("share_id", in.InviterId))
+		return &emptypb.Empty{}, nil
+	}
+
 	inviteeData := &InviteData{}
 	if err := LoadData(ctx, s.logger, s.db, userID, inviteeData); err != nil {
 		return nil, err
 	}
 
 	if inviteeData.BeInvited {
-		s.logger.Info("已接受邀请", zap.String("share_id", in.ShareId))
+		s.logger.Info("已接受邀请", zap.String("share_id", in.InviterId))
 		return &emptypb.Empty{}, nil
 	}
 
-	users, err := GetUsers(ctx, s.logger, s.db, s.statusRegistry, nil, []string{in.ShareId}, nil)
+	users, err := GetUsers(ctx, s.logger, s.db, s.statusRegistry, nil, []string{in.InviterId}, nil)
 	if err != nil {
 		return nil, err
 	}
 	if users == nil || len(users.Users) == 0 {
-		s.logger.Error("邀请人不存在", zap.String("share_id", in.ShareId))
+		s.logger.Error("邀请人不存在", zap.String("share_id", in.InviterId))
 		return nil, nil
 	}
 
@@ -66,7 +79,7 @@ func (s *ApiServer) SubmitBeInvited(ctx context.Context, in *game.SubmitBeInvite
 		return nil, err
 	}
 
-	inviterData.List[userName] = &InviteRecord{Invitee: userName, RewardAvailable: false, RewardClaimed: false}
+	inviterData.List[userName] = &InviteRecord{Invitee: userName, RewardClaimed: false}
 	if err = SaveData(ctx, s.logger, s.db, s.metrics, s.storageIndex, inviterID, inviterData); err != nil {
 		return nil, err
 	}
@@ -87,6 +100,7 @@ type HomeData struct {
 func (f *HomeData) GetCollection() string {
 	return "Home"
 }
+
 func (f *HomeData) GetKey() string {
 	return "HomeData"
 }
@@ -102,12 +116,16 @@ func (s *ApiServer) ListInvitee(ctx context.Context, in *emptypb.Empty) (*game.L
 		return nil, err
 	}
 
-	resp := &game.ListInviteeResponse{InviterIds: []string{}}
+	resp := &game.ListInviteeResponse{InviteeIds: []string{}}
 	for _, v := range inviterData.List {
 		if !v.RewardClaimed {
 			if users, err := GetUsers(ctx, s.logger, s.db, s.statusRegistry, nil, []string{v.Invitee}, nil); err != nil {
 				return nil, err
 			} else {
+				if users == nil || len(users.Users) == 0 {
+					s.logger.Info("邀请人没注册", zap.String("share_id", v.Invitee))
+					continue
+				}
 				inviter := users.Users[0]
 				inviterID, _ := uuid.FromString(inviter.Id)
 				homeData := &HomeData{}
@@ -115,7 +133,7 @@ func (s *ApiServer) ListInvitee(ctx context.Context, in *emptypb.Empty) (*game.L
 					return nil, err
 				}
 				if homeData.CurLevelId > "L1001" {
-					resp.InviterIds = append(resp.InviterIds, v.Invitee)
+					resp.InviteeIds = append(resp.InviteeIds, v.Invitee)
 				}
 			}
 		}
@@ -130,7 +148,7 @@ func (s *ApiServer) ClaimInviteReward(ctx context.Context, in *game.ClaimInviteR
 		return nil, err
 	}
 
-	for _, v := range in.InviterIds {
+	for _, v := range in.InviteeIds {
 		entry, exists := inviterData.List[v]
 		if !exists {
 			return nil, fmt.Errorf("inviter ID %s does not exist in the list", v)

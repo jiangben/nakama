@@ -126,8 +126,8 @@ const (
 	Nakama_Feedback_FullMethodName                          = "/nakama.api.Nakama/Feedback"
 	Nakama_AuthenticateWechat_FullMethodName                = "/nakama.api.Nakama/AuthenticateWechat"
 	Nakama_AuthenticateTikTok_FullMethodName                = "/nakama.api.Nakama/AuthenticateTikTok"
-	Nakama_SubmitInvite_FullMethodName                      = "/nakama.api.Nakama/SubmitInvite"
-	Nakama_ListInviter_FullMethodName                       = "/nakama.api.Nakama/ListInviter"
+	Nakama_SubmitBeInvited_FullMethodName                   = "/nakama.api.Nakama/SubmitBeInvited"
+	Nakama_ListInvitee_FullMethodName                       = "/nakama.api.Nakama/ListInvitee"
 	Nakama_ClaimInviteReward_FullMethodName                 = "/nakama.api.Nakama/ClaimInviteReward"
 	Nakama_GetGameTime_FullMethodName                       = "/nakama.api.Nakama/GetGameTime"
 )
@@ -311,9 +311,9 @@ type NakamaClient interface {
 	// Authenticate a user with TikTok code.
 	AuthenticateTikTok(ctx context.Context, in *game.AuthenticateTiktokRequest, opts ...grpc.CallOption) (*api.Session, error)
 	// Submit an invitation request.
-	SubmitInvite(ctx context.Context, in *game.SubmitBeInvitedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// List inviter information for a user.
-	ListInviter(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*game.ListInviteeResponse, error)
+	SubmitBeInvited(ctx context.Context, in *game.SubmitBeInvitedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// List invitee information for a user.
+	ListInvitee(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*game.ListInviteeResponse, error)
 	// Claim invite reward for a user.
 	ClaimInviteReward(ctx context.Context, in *game.ClaimInviteRewardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Get Server Time
@@ -1111,18 +1111,18 @@ func (c *nakamaClient) AuthenticateTikTok(ctx context.Context, in *game.Authenti
 	return out, nil
 }
 
-func (c *nakamaClient) SubmitInvite(ctx context.Context, in *game.SubmitBeInvitedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *nakamaClient) SubmitBeInvited(ctx context.Context, in *game.SubmitBeInvitedRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Nakama_SubmitInvite_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Nakama_SubmitBeInvited_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *nakamaClient) ListInviter(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*game.ListInviteeResponse, error) {
+func (c *nakamaClient) ListInvitee(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*game.ListInviteeResponse, error) {
 	out := new(game.ListInviteeResponse)
-	err := c.cc.Invoke(ctx, Nakama_ListInviter_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Nakama_ListInvitee_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1326,9 +1326,9 @@ type NakamaServer interface {
 	// Authenticate a user with TikTok code.
 	AuthenticateTikTok(context.Context, *game.AuthenticateTiktokRequest) (*api.Session, error)
 	// Submit an invitation request.
-	SubmitInvite(context.Context, *game.SubmitBeInvitedRequest) (*emptypb.Empty, error)
-	// List inviter information for a user.
-	ListInviter(context.Context, *emptypb.Empty) (*game.ListInviteeResponse, error)
+	SubmitBeInvited(context.Context, *game.SubmitBeInvitedRequest) (*emptypb.Empty, error)
+	// List invitee information for a user.
+	ListInvitee(context.Context, *emptypb.Empty) (*game.ListInviteeResponse, error)
 	// Claim invite reward for a user.
 	ClaimInviteReward(context.Context, *game.ClaimInviteRewardRequest) (*emptypb.Empty, error)
 	// Get Server Time
@@ -1601,11 +1601,11 @@ func (UnimplementedNakamaServer) AuthenticateWechat(context.Context, *game.Authe
 func (UnimplementedNakamaServer) AuthenticateTikTok(context.Context, *game.AuthenticateTiktokRequest) (*api.Session, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateTikTok not implemented")
 }
-func (UnimplementedNakamaServer) SubmitInvite(context.Context, *game.SubmitBeInvitedRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubmitInvite not implemented")
+func (UnimplementedNakamaServer) SubmitBeInvited(context.Context, *game.SubmitBeInvitedRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitBeInvited not implemented")
 }
-func (UnimplementedNakamaServer) ListInviter(context.Context, *emptypb.Empty) (*game.ListInviteeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListInviter not implemented")
+func (UnimplementedNakamaServer) ListInvitee(context.Context, *emptypb.Empty) (*game.ListInviteeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListInvitee not implemented")
 }
 func (UnimplementedNakamaServer) ClaimInviteReward(context.Context, *game.ClaimInviteRewardRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClaimInviteReward not implemented")
@@ -3192,38 +3192,38 @@ func _Nakama_AuthenticateTikTok_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Nakama_SubmitInvite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Nakama_SubmitBeInvited_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(game.SubmitBeInvitedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NakamaServer).SubmitInvite(ctx, in)
+		return srv.(NakamaServer).SubmitBeInvited(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Nakama_SubmitInvite_FullMethodName,
+		FullMethod: Nakama_SubmitBeInvited_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NakamaServer).SubmitInvite(ctx, req.(*game.SubmitBeInvitedRequest))
+		return srv.(NakamaServer).SubmitBeInvited(ctx, req.(*game.SubmitBeInvitedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Nakama_ListInviter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Nakama_ListInvitee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NakamaServer).ListInviter(ctx, in)
+		return srv.(NakamaServer).ListInvitee(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Nakama_ListInviter_FullMethodName,
+		FullMethod: Nakama_ListInvitee_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NakamaServer).ListInviter(ctx, req.(*emptypb.Empty))
+		return srv.(NakamaServer).ListInvitee(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3620,12 +3620,12 @@ var Nakama_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Nakama_AuthenticateTikTok_Handler,
 		},
 		{
-			MethodName: "SubmitInvite",
-			Handler:    _Nakama_SubmitInvite_Handler,
+			MethodName: "SubmitBeInvited",
+			Handler:    _Nakama_SubmitBeInvited_Handler,
 		},
 		{
-			MethodName: "ListInviter",
-			Handler:    _Nakama_ListInviter_Handler,
+			MethodName: "ListInvitee",
+			Handler:    _Nakama_ListInvitee_Handler,
 		},
 		{
 			MethodName: "ClaimInviteReward",

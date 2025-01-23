@@ -4186,7 +4186,7 @@ func local_request_Nakama_AuthenticateTikTok_0(ctx context.Context, marshaler ru
 
 }
 
-func request_Nakama_SubmitInvite_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Nakama_SubmitBeInvited_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq game.SubmitBeInvitedRequest
 	var metadata runtime.ServerMetadata
 
@@ -4198,12 +4198,12 @@ func request_Nakama_SubmitInvite_0(ctx context.Context, marshaler runtime.Marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.SubmitInvite(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.SubmitBeInvited(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Nakama_SubmitInvite_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Nakama_SubmitBeInvited_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq game.SubmitBeInvitedRequest
 	var metadata runtime.ServerMetadata
 
@@ -4215,25 +4215,25 @@ func local_request_Nakama_SubmitInvite_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.SubmitInvite(ctx, &protoReq)
+	msg, err := server.SubmitBeInvited(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_Nakama_ListInviter_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Nakama_ListInvitee_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq emptypb.Empty
 	var metadata runtime.ServerMetadata
 
-	msg, err := client.ListInviter(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.ListInvitee(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Nakama_ListInviter_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Nakama_ListInvitee_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq emptypb.Empty
 	var metadata runtime.ServerMetadata
 
-	msg, err := server.ListInviter(ctx, &protoReq)
+	msg, err := server.ListInvitee(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -6546,7 +6546,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 
 	})
 
-	mux.Handle("POST", pattern_Nakama_SubmitInvite_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Nakama_SubmitBeInvited_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -6554,12 +6554,12 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/SubmitInvite", runtime.WithHTTPPathPattern("/v2/invite/submit"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/SubmitBeInvited", runtime.WithHTTPPathPattern("/v2/invite/submit"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Nakama_SubmitInvite_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Nakama_SubmitBeInvited_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -6567,11 +6567,11 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 			return
 		}
 
-		forward_Nakama_SubmitInvite_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Nakama_SubmitBeInvited_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Nakama_ListInviter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Nakama_ListInvitee_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -6579,12 +6579,12 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListInviter", runtime.WithHTTPPathPattern("/v2/invite/list"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListInvitee", runtime.WithHTTPPathPattern("/v2/invitee/list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Nakama_ListInviter_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Nakama_ListInvitee_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -6592,7 +6592,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 			return
 		}
 
-		forward_Nakama_ListInviter_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Nakama_ListInvitee_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -8667,47 +8667,47 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 
 	})
 
-	mux.Handle("POST", pattern_Nakama_SubmitInvite_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Nakama_SubmitBeInvited_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/SubmitInvite", runtime.WithHTTPPathPattern("/v2/invite/submit"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/SubmitBeInvited", runtime.WithHTTPPathPattern("/v2/invite/submit"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Nakama_SubmitInvite_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Nakama_SubmitBeInvited_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Nakama_SubmitInvite_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Nakama_SubmitBeInvited_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Nakama_ListInviter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Nakama_ListInvitee_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListInviter", runtime.WithHTTPPathPattern("/v2/invite/list"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListInvitee", runtime.WithHTTPPathPattern("/v2/invitee/list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Nakama_ListInviter_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Nakama_ListInvitee_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Nakama_ListInviter_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Nakama_ListInvitee_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -8939,9 +8939,9 @@ var (
 
 	pattern_Nakama_AuthenticateTikTok_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v2", "account", "authenticate", "tiktok"}, ""))
 
-	pattern_Nakama_SubmitInvite_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v2", "invite", "submit"}, ""))
+	pattern_Nakama_SubmitBeInvited_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v2", "invite", "submit"}, ""))
 
-	pattern_Nakama_ListInviter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v2", "invite", "list"}, ""))
+	pattern_Nakama_ListInvitee_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v2", "invitee", "list"}, ""))
 
 	pattern_Nakama_ClaimInviteReward_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v2", "invite", "claim"}, ""))
 
@@ -9129,9 +9129,9 @@ var (
 
 	forward_Nakama_AuthenticateTikTok_0 = runtime.ForwardResponseMessage
 
-	forward_Nakama_SubmitInvite_0 = runtime.ForwardResponseMessage
+	forward_Nakama_SubmitBeInvited_0 = runtime.ForwardResponseMessage
 
-	forward_Nakama_ListInviter_0 = runtime.ForwardResponseMessage
+	forward_Nakama_ListInvitee_0 = runtime.ForwardResponseMessage
 
 	forward_Nakama_ClaimInviteReward_0 = runtime.ForwardResponseMessage
 

@@ -50,7 +50,6 @@ func LoadData(ctx context.Context, logger *zap.Logger, db *sql.DB, userID uuid.U
 	}
 
 	if len(storageObjects.Objects) == 0 {
-		logger.Info("初始化数据")
 		storable.Init()
 		return nil
 	}

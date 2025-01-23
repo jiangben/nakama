@@ -36,15 +36,15 @@ message AuthenticateTiktokRequest{
 }
 
 message SubmitBeInvitedRequest {
-  string share_id = 1;
+  string inviter_id = 1;
 }
 
 message ListInviteeResponse{
-  repeated string inviter_ids = 1;
+  repeated string invitee_ids = 1;
 }
 
 message ClaimInviteRewardRequest{
-  repeated string inviter_ids = 1;
+  repeated string invitee_ids = 1;
 }
 
 message GetGameTimeResponse{

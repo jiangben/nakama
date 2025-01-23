@@ -2698,33 +2698,10 @@
         ]
       }
     },
-    "/v2/invite/list": {
-      "get": {
-        "summary": "List inviter information for a user.",
-        "operationId": "Nakama_ListInviter",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/gameListInviteeResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "Nakama"
-        ]
-      }
-    },
     "/v2/invite/submit": {
       "post": {
         "summary": "Submit an invitation request.",
-        "operationId": "Nakama_SubmitInvite",
+        "operationId": "Nakama_SubmitBeInvited",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -2750,6 +2727,29 @@
             }
           }
         ],
+        "tags": [
+          "Nakama"
+        ]
+      }
+    },
+    "/v2/invitee/list": {
+      "get": {
+        "summary": "List invitee information for a user.",
+        "operationId": "Nakama_ListInvitee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/gameListInviteeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
         "tags": [
           "Nakama"
         ]
@@ -5674,7 +5674,7 @@
     "gameClaimInviteRewardRequest": {
       "type": "object",
       "properties": {
-        "inviterIds": {
+        "inviteeIds": {
           "type": "array",
           "items": {
             "type": "string"
@@ -5706,7 +5706,7 @@
     "gameListInviteeResponse": {
       "type": "object",
       "properties": {
-        "inviterIds": {
+        "inviteeIds": {
           "type": "array",
           "items": {
             "type": "string"
@@ -5737,7 +5737,7 @@
     "gameSubmitBeInvitedRequest": {
       "type": "object",
       "properties": {
-        "shareId": {
+        "inviterId": {
           "type": "string"
         }
       }
